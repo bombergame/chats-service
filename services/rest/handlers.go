@@ -73,7 +73,7 @@ func (srv *Service) joinChat(w http.ResponseWriter, r *http.Request) {
 
 		switch cmdRequest.Type {
 		case "make_private_chat":
-			data, ok := cmdRequest.Data.(MakePrivateChatRequestData)
+			data, ok := cmdRequest.Data.(map[string]interface{})
 			if !ok {
 				log.Println(cmdRequest)
 				continue
@@ -81,7 +81,13 @@ func (srv *Service) joinChat(w http.ResponseWriter, r *http.Request) {
 
 			log.Println("make_chat parsed")
 
-			id, err := srv.components.ChatRepository.StartPrivateChat(authID.AuthID, data.ProfileID)
+			pID, ok := data["profile_id"].(int64)
+			if !ok {
+				log.Println(data)
+				continue
+			}
+
+			id, err := srv.components.ChatRepository.StartPrivateChat(authID.AuthID, pID)
 			if err != nil {
 				log.Println(err)
 				continue
