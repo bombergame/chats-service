@@ -81,13 +81,15 @@ func (srv *Service) joinChat(w http.ResponseWriter, r *http.Request) {
 
 			log.Println("make_chat parsed")
 
-			pID, ok := data["profile_id"].(int64)
+			log.Println("OK:", data["profile_id"])
+
+			pID, ok := data["profile_id"].(int)
 			if !ok {
 				log.Println(data)
 				continue
 			}
 
-			id, err := srv.components.ChatRepository.StartPrivateChat(authID.AuthID, pID)
+			id, err := srv.components.ChatRepository.StartPrivateChat(authID.AuthID, int64(pID))
 			if err != nil {
 				log.Println(err)
 				continue
