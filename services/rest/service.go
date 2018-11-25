@@ -2,7 +2,7 @@ package rest
 
 import (
 	"fmt"
-	"github.com/bombergame/chat-service/config"
+	"github.com/bombergame/chats-service/config"
 	"github.com/bombergame/common/rest"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
