@@ -6,6 +6,8 @@ import (
 
 //easyjson:json
 type Message struct {
-	ID        uuid.UUID
+	MessageID uuid.UUID
+	ChatID    uuid.UUID
 	ProfileID int64
+	Text      string
 }
