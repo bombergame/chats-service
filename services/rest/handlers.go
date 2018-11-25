@@ -24,8 +24,6 @@ func (srv *Service) deleteChat(w http.ResponseWriter, r *http.Request) {
 }
 
 func (srv *Service) joinChat(w http.ResponseWriter, r *http.Request) {
-	var authID int64 = 1
-
 	conn, err := srv.upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
