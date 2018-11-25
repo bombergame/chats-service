@@ -29,12 +29,16 @@ func (srv *Service) joinChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("upgraded")
+
 	_, p, err := conn.ReadMessage()
 	if err != nil {
 		log.Println(err)
 		conn.Close()
 		return
 	}
+
+	log.Println("auth received")
 
 	var authID AuthID
 	if err := json.Unmarshal(p, &authID); err != nil {
@@ -43,12 +47,16 @@ func (srv *Service) joinChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("auth parsed")
+
 	err = srv.components.ConnManager.AddConnection(authID.AuthID, conn)
 	if err != nil {
 		log.Println(err)
 		conn.Close()
 		return
 	}
+
+	log.Println("connection added to manager")
 
 	for {
 		messageType, p, err := conn.ReadMessage()
