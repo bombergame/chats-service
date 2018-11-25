@@ -29,8 +29,8 @@ type Config struct {
 
 type Components struct {
 	rest.Components
-	connManager    *utils.ConnectionManager
-	chatRepository repositories.ChatRepository
+	ConnManager    *utils.ConnectionManager
+	ChatRepository repositories.ChatRepository
 }
 
 func NewService(cf Config, cpn Components) *Service {

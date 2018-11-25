@@ -1,7 +1,9 @@
 package main
 
 import (
+	"github.com/bombergame/chats-service/repositories/postgres"
 	"github.com/bombergame/chats-service/services/rest"
+	"github.com/bombergame/chats-service/utils"
 	"github.com/bombergame/common/logs"
 	restful "github.com/bombergame/common/rest"
 	"os"
@@ -11,12 +13,21 @@ import (
 func main() {
 	logger := logs.NewLogger()
 
+	conn := postgres.NewConnection()
+	defer conn.Close()
+	if err := conn.Open(); err != nil {
+		logger.Fatal(err)
+		return
+	}
+
 	restSrv := rest.NewService(
 		rest.Config{},
 		rest.Components{
 			Components: restful.Components{
 				Logger: logger,
 			},
+			ChatRepository: postgres.NewProfileRepository(conn),
+			ConnManager:    utils.NewConnectionManager(),
 		},
 	)
 

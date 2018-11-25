@@ -2,7 +2,6 @@ package rest
 
 import (
 	"encoding/json"
-	"github.com/satori/go.uuid"
 	"log"
 	"net/http"
 )
@@ -30,10 +29,26 @@ func (srv *Service) joinChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//err = srv.components.connManager.AddConnection(authID, conn)
-	//if err != nil {
-	//	log.Println(err)
-	//}
+	_, p, err := conn.ReadMessage()
+	if err != nil {
+		log.Println(err)
+		conn.Close()
+		return
+	}
+
+	var authID AuthID
+	if err := json.Unmarshal(p, &authID); err != nil {
+		log.Println(err)
+		conn.Close()
+		return
+	}
+
+	err = srv.components.ConnManager.AddConnection(authID.AuthID, conn)
+	if err != nil {
+		log.Println(err)
+		conn.Close()
+		return
+	}
 
 	for {
 		messageType, p, err := conn.ReadMessage()
@@ -48,25 +63,33 @@ func (srv *Service) joinChat(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		log.Println(cmdRequest)
+		switch cmdRequest.Type {
+		case "make_private_chat":
+			data, ok := cmdRequest.Data.(MakePrivateChatRequestData)
+			if !ok {
+				log.Println(cmdRequest)
+				continue
+			}
 
-		if cmdRequest.Type != "make_private_chat" {
-			log.Println(" not make private chat")
-			continue
-		}
+			id, err := srv.components.ChatRepository.StartPrivateChat(authID.AuthID, data.ProfileID)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
 
-		cmdResponse := CommandResponse{
-			Type: "make_private_chat",
-			Data: MakePrivateChatResponseData{
-				ChatID: uuid.NewV4(),
-			},
-		}
+			cmdResponse := CommandResponse{
+				Type: "make_private_chat",
+				Data: MakePrivateChatResponseData{
+					ChatID: id,
+				},
+			}
 
-		rsp, _ := json.Marshal(cmdResponse)
+			rsp, _ := json.Marshal(cmdResponse)
 
-		if err := conn.WriteMessage(messageType, rsp); err != nil {
-			log.Println(err)
-			return
+			if err := conn.WriteMessage(messageType, rsp); err != nil {
+				log.Println(err)
+				continue
+			}
 		}
 	}
 }

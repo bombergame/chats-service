@@ -39,6 +39,20 @@ CREATE TABLE IF NOT EXISTS message (
     CONSTRAINT message_posted_timestamp_not_null NOT NULL
 );
 
+CREATE OR REPLACE FUNCTION create_or_get_chat(_profile_id_ BIGINT)
+RETURNS uuid
+AS $$
+  DECLARE _chat_id_ uuid;
+BEGIN
+  INSERT INTO chat(id) VALUES(uuid_generate_v4())
+    RETURNING chat.id INTO _chat_id_;
+
+  INSERT INTO participant(chat_id, profile_id) VALUES(_chat_id_, _profile_id_);
+  RETURN _chat_id_;
+END;
+$$
+LANGUAGE PLPGSQL;
+
 CREATE OR REPLACE FUNCTION create_or_get_chat(
   _profile_id1_ BIGINT, _profile_id2_ BIGINT)
 RETURNS uuid

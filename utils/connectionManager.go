@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"github.com/bombergame/common/errs"
 	"github.com/gorilla/websocket"
 	"sync"
 )
@@ -26,6 +27,14 @@ func (m *ConnectionManager) AddConnection(id int64, conn *websocket.Conn) error 
 	return nil
 }
 
-func (m *ConnectionManager) ListenAndServe() {
+func (m *ConnectionManager) GetConnection(id int64) (*websocket.Conn, error) {
+	m.rwMutex.RLock()
+	defer m.rwMutex.RUnlock()
 
+	conn, ok := m.conns[id]
+	if !ok {
+		return nil, errs.NewNotFoundError("connection not found")
+	}
+
+	return conn, nil
 }

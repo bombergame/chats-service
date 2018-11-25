@@ -2,6 +2,11 @@ package rest
 
 import "github.com/satori/go.uuid"
 
+type AuthID struct {
+	Type   string
+	AuthID int64 `json:"auth_id"`
+}
+
 type CommandRequest struct {
 	Type string      `json:"type"`
 	Data interface{} `json:"data"`
@@ -13,8 +18,7 @@ type CommandResponse struct {
 }
 
 type MakePrivateChatRequestData struct {
-	ProfileID1 int64 `json:"profile_id_1"`
-	ProfileID2 int64 `json:"profile_id_2"`
+	ProfileID int64 `json:"profile_id"`
 }
 
 type MakePrivateChatResponseData struct {
