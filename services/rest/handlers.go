@@ -79,11 +79,15 @@ func (srv *Service) joinChat(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
+			log.Println("make_chat parsed")
+
 			id, err := srv.components.ChatRepository.StartPrivateChat(authID.AuthID, data.ProfileID)
 			if err != nil {
 				log.Println(err)
 				continue
 			}
+
+			log.Println("chat in repository")
 
 			cmdResponse := CommandResponse{
 				Type: "make_private_chat",
@@ -94,10 +98,14 @@ func (srv *Service) joinChat(w http.ResponseWriter, r *http.Request) {
 
 			rsp, _ := json.Marshal(cmdResponse)
 
+			log.Println("response marshaled")
+
 			if err := conn.WriteMessage(messageType, rsp); err != nil {
 				log.Println(err)
 				continue
 			}
+
+			log.Println("response sent")
 		}
 	}
 }
