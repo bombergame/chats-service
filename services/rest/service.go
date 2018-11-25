@@ -3,6 +3,8 @@ package rest
 import (
 	"fmt"
 	"github.com/bombergame/chats-service/config"
+	"github.com/bombergame/chats-service/repositories"
+	"github.com/bombergame/chats-service/utils"
 	"github.com/bombergame/common/rest"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -27,6 +29,8 @@ type Config struct {
 
 type Components struct {
 	rest.Components
+	connManager    *utils.ConnectionManager
+	chatRepository repositories.ChatRepository
 }
 
 func NewService(cf Config, cpn Components) *Service {
