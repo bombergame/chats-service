@@ -32,10 +32,10 @@ func (srv *Service) joinChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = srv.components.connManager.AddConnection(authID, conn)
-	if err != nil {
-		log.Println(err)
-	}
+	//err = srv.components.connManager.AddConnection(authID, conn)
+	//if err != nil {
+	//	log.Println(err)
+	//}
 
 	for {
 		messageType, p, err := conn.ReadMessage()
